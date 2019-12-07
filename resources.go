@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package xyz
+package influxdb
 
 import (
 	"unicode"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/pulumi/pulumi-terraform-bridge/pkg/tfbridge"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/pulumi/pulumi-terraform/pkg/tfbridge"
 	"github.com/pulumi/pulumi/pkg/resource"
 	"github.com/pulumi/pulumi/pkg/tokens"
-	"github.com/terraform-providers/terraform-provider-xyz/xyz"
+	"github.com/terraform-providers/terraform-provider-influxdb/influxdb"
 )
 
 // all of the token components used below.
 const (
 	// packages:
-	mainPkg = "xyz"
+	mainPkg = "influxdb"
 	// modules:
 	mainMod = "index" // the y module
 )
@@ -87,47 +87,38 @@ var managedByPulumi = &tfbridge.DefaultInfo{Value: "Managed by Pulumi"}
 // Provider returns additional overlaid schema and metadata associated with the provider..
 func Provider() tfbridge.ProviderInfo {
 	// Instantiate the Terraform provider
-	p := xyz.Provider().(*schema.Provider)
+	p := influxdb.Provider().(*schema.Provider)
 
 	// Create a Pulumi provider mapping
 	prov := tfbridge.ProviderInfo{
 		P:           p,
-		Name:        "xyz",
-		Description: "A Pulumi package for creating and managing xyz cloud resources.",
-		Keywords:    []string{"pulumi", "xyz"},
+		Name:        "influxdb",
+		Description: "A Pulumi package for creating and managing influxdb cloud resources.",
+		Keywords:    []string{"pulumi", "influxdb"},
 		License:     "Apache-2.0",
 		Homepage:    "https://pulumi.io",
-		Repository:  "https://github.com/pulumi/pulumi-xyz",
-		Config:      map[string]*tfbridge.SchemaInfo{
-			// Add any required configuration here, or remove the example below if
-			// no additional points are required.
-			// "region": {
-			// 	Type: makeType("region", "Region"),
-			// 	Default: &tfbridge.DefaultInfo{
-			// 		EnvVars: []string{"AWS_REGION", "AWS_DEFAULT_REGION"},
-			// 	},
-			// },
+		Repository:  "https://github.com/pulumi/pulumi-influxdb",
+		Config: map[string]*tfbridge.SchemaInfo{
+			"url": {Default: &tfbridge.DefaultInfo{
+				EnvVars: []string{"INFLUXDB_URL"},
+			}},
+			"username": {Default: &tfbridge.DefaultInfo{
+				EnvVars: []string{"INFLUXDB_USERNAME"},
+			}},
+			"password": {Default: &tfbridge.DefaultInfo{
+				EnvVars: []string{"INFLUXDB_PASSWORD"},
+			}},
+			"skip_ssl_verify": {Default: &tfbridge.DefaultInfo{
+				EnvVars: []string{"INFLUXDB_SKIP_SSL_VERIFY"},
+			}},
 		},
 		PreConfigureCallback: preConfigureCallback,
-		Resources:            map[string]*tfbridge.ResourceInfo{
-			// Map each resource in the Terraform provider to a Pulumi type. Two examples
-			// are below - the single line form is the common case. The multi-line form is
-			// needed only if you wish to override types or other default options.
-			//
-			// "aws_iam_role": {Tok: makeResource(mainMod, "IamRole")}
-			//
-			// "aws_acm_certificate": {
-			// 	Tok: makeResource(mainMod, "Certificate"),
-			// 	Fields: map[string]*tfbridge.SchemaInfo{
-			// 		"tags": {Type: makeType(mainPkg, "Tags")},
-			// 	},
-			// },
+		Resources: map[string]*tfbridge.ResourceInfo{
+			"influxdb_continuous_query": {Tok: makeResource(mainMod, "ContinuousQuery")},
+			"influxdb_database":         {Tok: makeResource(mainMod, "Database")},
+			"influxdb_user":             {Tok: makeResource(mainMod, "User")},
 		},
-		DataSources: map[string]*tfbridge.DataSourceInfo{
-			// Map each resource in the Terraform provider to a Pulumi function. An example
-			// is below.
-			// "aws_ami": {Tok: makeDataSource(mainMod, "getAmi")},
-		},
+		DataSources: map[string]*tfbridge.DataSourceInfo{},
 		JavaScript: &tfbridge.JavaScriptInfo{
 			// List any npm dependencies and their versions
 			Dependencies: map[string]string{

@@ -1,0 +1,25 @@
+{
+    "name": "@pulumi/influxdb",
+    "version": "${VERSION}",
+    "description": "A Pulumi package for creating and managing influxdb cloud resources.",
+    "keywords": [
+        "pulumi",
+        "influxdb"
+    ],
+    "homepage": "https://pulumi.io",
+    "repository": "https://github.com/pulumi/pulumi-influxdb",
+    "license": "Apache-2.0",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest"
+    },
+    "devDependencies": {
+        "@types/mime": "^2.0.0",
+        "@types/node": "^8.0.25"
+    },
+    "pulumi": {
+        "resource": true
+    }
+}

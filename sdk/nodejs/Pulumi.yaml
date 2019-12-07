@@ -1,0 +1,3 @@
+name: influxdb
+description: A Pulumi resource provider for influxdb.
+language: nodejs
